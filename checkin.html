@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1b1530">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Morning Card">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <title>Food Check-in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="screen">
+
+    <header class="greeting">
+      <p class="label" id="meal-label">check-in</p>
+      <h1 class="question">What did you eat today?</h1>
+      <p class="subtitle">No judgment. Okay, a little judgment.</p>
+    </header>
+
+    <section class="form">
+      <label class="visually-hidden" for="food-input">What you ate</label>
+      <textarea id="food-input" rows="3" placeholder="rice, chicken, coffee..."></textarea>
+      <button id="judge-button" class="primary-button" type="button">judge me</button>
+    </section>
+
+    <section id="verdict" class="verdict" hidden aria-live="polite">
+      <div class="judge-avatar" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z" fill="currentColor"/></svg>
+      </div>
+      <div class="verdict-bubble">
+        <p class="verdict-label">the verdict</p>
+        <p id="verdict-text" class="verdict-text"></p>
+      </div>
+    </section>
+
+    <section class="history" aria-labelledby="history-title">
+      <h2 id="history-title" class="history-title">recent check-ins</h2>
+      <p id="history-empty" class="history-empty">Nothing yet. Feed the judge.</p>
+      <ul id="history-list" class="history-list"></ul>
+    </section>
+
+    <nav class="nav" aria-label="Main">
+      <a href="index.html">morning card</a>
+      <a href="checkin.html" aria-current="page">check-in</a>
+    </nav>
+
+  </main>
+
+  <script src="roasts.js"></script>
+  <script src="checkin.js"></script>
+  <script src="pwa.js"></script>
+</body>
+</html>
