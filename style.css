@@ -1,0 +1,156 @@
+/* ---------- Colors and sizes live here, so they're easy to change ---------- */
+:root {
+  --bg-top: #1b1530;
+  --bg-mid: #2a2046;
+  --bg-bottom: #3a2c5c;
+  --panel: #2f2550;
+  --border: #4a3d75;
+  --cream: #f6e7d8;
+  --ink: #2a2046;
+  --muted: #b9a8d8;
+  --soft: #cdb8e8;
+  --accent: #e58fa8;   /* change this one line to recolor the whole app */
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Nunito', system-ui, sans-serif;
+  color: var(--cream);
+  background: linear-gradient(170deg, var(--bg-top) 0%, var(--bg-mid) 55%, var(--bg-bottom) 100%);
+  background-attachment: fixed;
+}
+
+/* Centered column that looks like a phone screen even on a laptop */
+.screen {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 56px 24px 32px;
+}
+
+/* ---------- Header ---------- */
+.label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+.title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--accent);
+  margin: 0 0 10px;
+}
+.subtitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--soft);
+  margin: 0;
+}
+
+/* ---------- The three cards ---------- */
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+.card {
+  width: 100px;
+  height: 176px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  perspective: 700px;            /* gives the flip its 3D depth */
+  transition: opacity 0.4s;
+  font-family: inherit;
+}
+.card:focus-visible { outline: 2px solid var(--cream); outline-offset: 4px; border-radius: 12px; }
+
+/* The inner part is what actually rotates */
+.card-inner {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.7s;
+}
+.card.flipped .card-inner { transform: rotateY(180deg); }
+.card.dimmed { opacity: 0.38; }
+
+/* Both faces sit on top of each other; backface-visibility hides whichever one faces away */
+.face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 12px;
+  border: 2px solid var(--accent);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.back {
+  justify-content: center;
+  gap: 14px;
+  color: var(--accent);
+  background: linear-gradient(160deg, #3b2f66, #2a2046);
+}
+.dots { display: flex; gap: 6px; }
+.dots i { width: 4px; height: 4px; border-radius: 50%; background: var(--cream); opacity: 0.7; }
+.dots i:nth-child(2) { opacity: 0.4; }
+
+.front {
+  justify-content: space-between;
+  padding: 24px 8px 12px;
+  color: var(--ink);
+  background: var(--cream);
+  transform: rotateY(180deg);    /* pre-turned so it faces forward after the flip */
+}
+.card-name {
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+}
+
+/* ---------- Reading below the cards ---------- */
+.reading-area { margin-top: 36px; }
+
+.prompt {
+  margin: 0;
+  padding: 20px;
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.reading {
+  padding: 22px 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+.reading-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--accent);
+  margin: 0 0 12px;
+}
+.reading-message { font-size: 17px; font-weight: 700; line-height: 1.5; margin: 0; }
+.reading hr { border: 0; height: 1px; background: var(--border); margin: 16px 0; }
+.nudge-label { font-size: 11px; font-weight: 800; letter-spacing: 1px; color: var(--muted); margin: 0 0 4px; }
+.nudge { font-size: 15px; font-weight: 700; line-height: 1.45; margin: 0; }

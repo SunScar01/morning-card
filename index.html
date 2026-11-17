@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Morning Card</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="screen">
+
+    <header class="greeting">
+      <p class="label">tuesday morning</p>
+      <h1 class="title">good morning, sunny.</h1>
+      <p class="subtitle">Three cards. One day. Pick with your gut.</p>
+    </header>
+
+    <section class="cards" aria-label="Today's three cards">
+
+      <button class="card" aria-label="Card 1, face down"
+        data-name="The Slow Sun"
+        data-message="Nothing has to be impressive today. A steady day beats a perfect one."
+        data-nudge="Finish one real thing before noon, then see how you feel.">
+        <span class="card-inner">
+          <span class="face back">
+            <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z" fill="currentColor"/></svg>
+            <span class="dots"><i></i><i></i><i></i></span>
+          </span>
+          <span class="face front">
+            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg>
+            <span class="card-name">The Slow Sun</span>
+          </span>
+        </span>
+      </button>
+
+      <button class="card" aria-label="Card 2, face down"
+        data-name="The Small Key"
+        data-message="The thing you keep avoiding is smaller than it looks. Today it opens easily."
+        data-nudge="Give the avoided task ten minutes. Set a timer and just start.">
+        <span class="card-inner">
+          <span class="face back">
+            <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z" fill="currentColor"/></svg>
+            <span class="dots"><i></i><i></i><i></i></span>
+          </span>
+          <span class="face front">
+            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4.5"/><path d="M11.2 11.8L20 3M16 7l3 3M14 9l2 2"/></svg>
+            <span class="card-name">The Small Key</span>
+          </span>
+        </span>
+      </button>
+
+      <button class="card" aria-label="Card 3, face down"
+        data-name="The Quiet Moon"
+        data-message="Good ideas show up when you stop forcing them. Leave a little room for one."
+        data-nudge="Take a short walk with your phone in your pocket.">
+        <span class="card-inner">
+          <span class="face back">
+            <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z" fill="currentColor"/></svg>
+            <span class="dots"><i></i><i></i><i></i></span>
+          </span>
+          <span class="face front">
+            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z"/></svg>
+            <span class="card-name">The Quiet Moon</span>
+          </span>
+        </span>
+      </button>
+
+    </section>
+
+    <section class="reading-area">
+      <p id="prompt" class="prompt">Tap a card to flip it. The other two stay a mystery.</p>
+
+      <article id="reading" class="reading" hidden>
+        <h2 id="reading-name" class="reading-name"></h2>
+        <p id="reading-message" class="reading-message"></p>
+        <hr>
+        <p class="nudge-label">TINY NUDGE</p>
+        <p id="reading-nudge" class="nudge"></p>
+      </article>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
