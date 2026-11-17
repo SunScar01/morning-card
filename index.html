@@ -21,25 +21,13 @@
     <header class="greeting">
       <p class="label" id="day-label">morning</p>
       <h1 class="title">good morning, sunny.</h1>
-      <p class="subtitle">Three cards. One day. Pick with your gut.</p>
+      <p class="subtitle" id="subtitle">Three cards. One day. Pick with your gut.</p>
     </header>
 
     <section class="cards" id="cards" aria-label="Today's three cards"></section>
 
-    <section class="reading-area">
-      <p id="prompt" class="prompt">Tap a card to flip it. The other two stay a mystery.</p>
-
-      <article id="reading" class="reading" hidden>
-        <h2 id="reading-name" class="reading-name"></h2>
-        <p id="reading-message" class="reading-message"></p>
-        <hr>
-        <p class="nudge-label">TINY NUDGE</p>
-        <p id="reading-nudge" class="nudge"></p>
-      </article>
-    </section>
-
     <nav class="nav" aria-label="Main">
-      <a href="index.html" aria-current="page">morning card</a>
+      <a href="index.html?card" aria-current="page">morning card</a>
       <a href="checkin.html">check-in</a>
     </nav>
 

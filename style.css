@@ -27,8 +27,12 @@ body {
 .screen {
   max-width: 430px;
   margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
   /* env(safe-area-inset-*) keeps content clear of the iPhone notch and home bar */
-  padding: calc(56px + env(safe-area-inset-top, 0px)) 24px calc(32px + env(safe-area-inset-bottom, 0px));
+  padding: calc(56px + env(safe-area-inset-top, 0px)) 24px calc(24px + env(safe-area-inset-bottom, 0px));
 }
 
 /* ---------- Header ---------- */
@@ -53,38 +57,51 @@ body {
   margin: 0;
 }
 
-/* ---------- The three cards ---------- */
+/* ---------- The three big cards ---------- */
 .cards {
+  flex: 1;
   display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 40px;
+  min-height: 380px;
+  margin-top: 28px;
 }
 
 .card {
-  width: 100px;
-  height: 176px;
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0 6px;
   padding: 0;
   border: 0;
   background: transparent;
   cursor: pointer;
-  perspective: 700px;            /* gives the flip its 3D depth */
-  transition: opacity 0.4s;
+  perspective: 1000px;           /* gives the flip its 3D depth */
   font-family: inherit;
+  /* flex-grow is what makes the picked card expand over the screen */
+  transition: flex-grow 0.7s ease, opacity 0.5s ease, margin 0.7s ease;
 }
-.card:focus-visible { outline: 2px solid var(--cream); outline-offset: 4px; border-radius: 12px; }
+.card:first-child { margin-left: 0; }
+.card:last-child { margin-right: 0; }
+.card:focus-visible { outline: 2px solid var(--cream); outline-offset: 4px; border-radius: 18px; }
 
-/* The inner part is what actually rotates */
+/* After you pick: the other two shrink to nothing and fade out, the picked one takes the whole row */
+.cards.picked .card { cursor: default; }
+.cards.picked .card:not(.flipped) {
+  flex-grow: 0;
+  margin: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.cards.picked .card.flipped { margin: 0; }
+
 .card-inner {
   display: block;
   position: relative;
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.7s;
+  transition: transform 0.8s;
 }
 .card.flipped .card-inner { transform: rotateY(180deg); }
-.card.dimmed { opacity: 0.38; }
 
 /* Both faces sit on top of each other; backface-visibility hides whichever one faces away */
 .face {
@@ -93,7 +110,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-radius: 12px;
+  border-radius: 18px;
   border: 2px solid var(--accent);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
@@ -101,7 +118,7 @@ body {
 
 .back {
   justify-content: center;
-  gap: 14px;
+  gap: 18px;
   color: var(--accent);
   background: linear-gradient(160deg, #3b2f66, #2a2046);
 }
@@ -109,52 +126,26 @@ body {
 .dots i { width: 4px; height: 4px; border-radius: 50%; background: var(--cream); opacity: 0.7; }
 .dots i:nth-child(2) { opacity: 0.4; }
 
+/* The face you read: icon, name, message and nudge all live ON the card */
 .front {
-  justify-content: space-between;
-  padding: 24px 8px 12px;
+  justify-content: center;
+  gap: 16px;
+  padding: 28px 22px;
+  text-align: center;
   color: var(--ink);
   background: var(--cream);
   transform: rotateY(180deg);    /* pre-turned so it faces forward after the flip */
 }
-.card-name {
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1.25;
-  text-align: center;
-}
-
-/* ---------- Reading below the cards ---------- */
-.reading-area { margin-top: 36px; }
-
-.prompt {
-  margin: 0;
-  padding: 20px;
-  border: 1px dashed var(--border);
-  border-radius: 16px;
-  text-align: center;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--muted);
-}
-
-.reading {
-  padding: 22px 20px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-}
-.reading-name {
+.card-icon svg { width: 72px; height: 72px; }
+.card-title {
   font-family: 'Press Start 2P', monospace;
-  font-size: 11px;
-  line-height: 1.5;
-  color: var(--accent);
-  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.6;
 }
-.reading-message { font-size: 17px; font-weight: 700; line-height: 1.5; margin: 0; }
-.reading hr { border: 0; height: 1px; background: var(--border); margin: 16px 0; }
-.nudge-label { font-size: 11px; font-weight: 800; letter-spacing: 1px; color: var(--muted); margin: 0 0 4px; }
-.nudge { font-size: 15px; font-weight: 700; line-height: 1.45; margin: 0; }
+.card-message { font-size: 20px; font-weight: 800; line-height: 1.4; }
+.card-rule { width: 48px; height: 3px; border-radius: 2px; background: var(--accent); }
+.card-nudge-label { font-size: 11px; font-weight: 800; letter-spacing: 1px; color: #6b5a8a; }
+.card-nudge { font-size: 16px; font-weight: 700; line-height: 1.45; }
 
 /* ======================= Step 3: check-in page + nav ======================= */
 
@@ -246,7 +237,7 @@ textarea:focus-visible, .primary-button:focus-visible, .nav a:focus-visible {
 .history-verdict { font-size: 14px; font-weight: 600; color: var(--soft); }
 
 /* Bottom navigation between the two pages */
-.nav { display: flex; justify-content: center; gap: 10px; margin-top: 36px; }
+.nav { display: flex; justify-content: center; gap: 10px; margin-top: 24px; }
 .nav a {
   display: inline-flex;
   align-items: center;

@@ -2,7 +2,7 @@
 // Ours does one job: save the app's files on the phone so it opens offline.
 
 // Bump this number whenever you change any file, so phones fetch the new version.
-const CACHE = 'morning-card-v1';
+const CACHE = 'morning-card-v2';
 
 // Relative paths on purpose: GitHub Pages hosts the app under /your-repo-name/, not at the root.
 const APP_FILES = [
@@ -43,7 +43,7 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     caches.open(CACHE).then(async (cache) => {
-      const cached = await cache.match(event.request);
+      const cached = await cache.match(event.request, { ignoreSearch: true });
       const fromNetwork = fetch(event.request)
         .then((response) => {
           if (response && (response.ok || response.type === 'opaque')) {

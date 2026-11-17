@@ -1,10 +1,9 @@
-// Step 2: pick three cards per day from the deck, let the user choose one,
-// and remember that choice so reopening the app shows the same card.
+// Step 5: big full-screen cards, the reading lives ON the picked card,
+// and the app sends you to the check-in page by itself at lunch and dinner.
 
 // ---------- 1. Date helpers ----------
-// Local date like "2026-11-17". We build it by hand instead of using
-// toISOString(), because that uses UTC and would flip to "tomorrow"
-// at 7 or 8 PM New York time.
+// Local date like "2026-11-17". Built by hand, because toISOString() uses UTC
+// and would flip to "tomorrow" in the evening New York time.
 function todayKey() {
   const d = new Date();
   const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -12,10 +11,7 @@ function todayKey() {
   return `${d.getFullYear()}-${month}-${day}`;
 }
 
-// ---------- 2. Seeded randomness ----------
-// Math.random() gives a different answer every time. We want the SAME three
-// cards all day, so we turn the date into a number (hash) and feed it to a
-// small random generator (mulberry32). Same date in, same cards out.
+// ---------- 2. Seeded randomness (same date in, same three cards out) ----------
 function hashString(str) {
   let h = 2166136261;
   for (let i = 0; i < str.length; i++) {
@@ -35,7 +31,6 @@ function mulberry32(seed) {
   };
 }
 
-// Shuffle a copy of the deck with the seeded generator, take the first three.
 function pickThree(dateKey) {
   const random = mulberry32(hashString(dateKey));
   const pool = [...DECK];
@@ -46,10 +41,9 @@ function pickThree(dateKey) {
   return pool.slice(0, 3);
 }
 
-// ---------- 3. Saving the choice ----------
-// localStorage keeps text on this phone/browser. We store an object like
-// { "2026-11-17": 1 } meaning "on that date you picked the 2nd card".
+// ---------- 3. Saved data ----------
 const STORAGE_KEY = 'morningCard.picks';
+const CHECKIN_KEY = 'morningCard.checkins';
 
 function loadPicks() {
   try {
@@ -65,71 +59,110 @@ function savePick(dateKey, index) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(picks));
 }
 
-// Testing helper: open the page with ?reset on the end of the URL to wipe today's pick.
-if (location.search.includes('reset')) {
-  localStorage.removeItem(STORAGE_KEY);
+function loadCheckins() {
+  try {
+    return JSON.parse(localStorage.getItem(CHECKIN_KEY)) || [];
+  } catch {
+    return [];
+  }
 }
 
-// ---------- 4. Building the page ----------
-const dateKey = todayKey();
-const todaysCards = pickThree(dateKey);
+// ---------- 4. "Is it time to ask what you ate?" ----------
+// Returns 'lunch' (12:00-15:59), 'dinner' (17:00 onward), or null the rest of the day.
+function currentCheckinSlot() {
+  const hour = new Date().getHours();
+  if (hour >= 12 && hour < 16) return 'lunch';
+  if (hour >= 17) return 'dinner';
+  return null;
+}
 
-const cardsEl = document.getElementById('cards');
-const promptEl = document.getElementById('prompt');
-const readingEl = document.getElementById('reading');
+// Did you already log this meal today?
+function hasCheckinToday(meal) {
+  const today = new Date().toDateString();
+  return loadCheckins().some((entry) => entry.meal === meal && new Date(entry.at).toDateString() === today);
+}
 
-document.getElementById('day-label').textContent =
-  new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase() + ' morning';
-
+// ---------- 5. Page building ----------
 function cardHTML(card, i) {
   return `
     <button class="card" data-index="${i}" aria-label="Card ${i + 1}, face down">
       <span class="card-inner">
         <span class="face back">
-          <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z" fill="currentColor"/></svg>
+          <svg width="44" height="44" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z" fill="currentColor"/></svg>
           <span class="dots"><i></i><i></i><i></i></span>
         </span>
-        <span class="face front">
-          ${ICONS[card.icon]}
-          <span class="card-name">${card.name}</span>
+        <span class="face front" aria-hidden="true">
+          <span class="card-icon">${ICONS[card.icon]}</span>
+          <span class="card-title">${card.name}</span>
+          <span class="card-message">${card.message}</span>
+          <span class="card-rule"></span>
+          <span class="card-nudge-label">TINY NUDGE</span>
+          <span class="card-nudge">${card.nudge}</span>
         </span>
       </span>
     </button>`;
 }
 
-cardsEl.innerHTML = todaysCards.map(cardHTML).join('');
-const cardButtons = cardsEl.querySelectorAll('.card');
+function main() {
+  const dateKey = todayKey();
+  const params = new URLSearchParams(location.search);
 
-// ---------- 5. Revealing a card ----------
-function reveal(index) {
-  const card = todaysCards[index];
+  // Testing helper: add ?reset to the URL to wipe saved picks.
+  if (params.has('reset')) localStorage.removeItem(STORAGE_KEY);
 
-  cardButtons.forEach((button, i) => {
-    if (i === index) {
-      button.classList.add('flipped');
-      button.setAttribute('aria-label', `Card ${i + 1}, ${card.name}, flipped`);
-    } else {
-      button.classList.add('dimmed');
+  const alreadyPicked = loadPicks()[dateKey];
+
+  // Auto-ask: you already flipped today's card, it's lunch or dinner time, and you
+  // haven't logged that meal yet -> go straight to the check-in page.
+  // Adding ?card to the URL skips this (the nav button uses it).
+  if (alreadyPicked !== undefined && !params.has('card')) {
+    const slot = currentCheckinSlot();
+    if (slot && !hasCheckinToday(slot)) {
+      location.replace('checkin.html');
+      return;
     }
-  });
+  }
 
-  document.getElementById('reading-name').textContent = card.name;
-  document.getElementById('reading-message').textContent = card.message;
-  document.getElementById('reading-nudge').textContent = card.nudge;
-  promptEl.hidden = true;
-  readingEl.hidden = false;
-}
+  const todaysCards = pickThree(dateKey);
+  const cardsEl = document.getElementById('cards');
+  const subtitleEl = document.getElementById('subtitle');
 
-// ---------- 6. Wiring it together ----------
-const alreadyPicked = loadPicks()[dateKey];
+  document.getElementById('day-label').textContent =
+    new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase() + ' morning';
 
-if (alreadyPicked !== undefined) {
-  reveal(alreadyPicked);              // you already chose today: show it again
-} else {
-  cardButtons.forEach((button, i) => {
-    button.addEventListener('click', () => {
-      savePick(dateKey, i);
-      reveal(i);
+  cardsEl.innerHTML = todaysCards.map(cardHTML).join('');
+  const cardButtons = cardsEl.querySelectorAll('.card');
+  let picked = false;
+
+  function reveal(index) {
+    const card = todaysCards[index];
+    picked = true;
+    cardsEl.classList.add('picked');          // CSS collapses the other two cards
+    subtitleEl.hidden = true;
+
+    cardButtons.forEach((button, i) => {
+      if (i === index) {
+        button.classList.add('flipped');
+        button.setAttribute('aria-label', `${card.name}. ${card.message} Tiny nudge: ${card.nudge}`);
+        button.querySelector('.front').removeAttribute('aria-hidden');
+      } else {
+        button.setAttribute('aria-hidden', 'true');
+        button.tabIndex = -1;
+      }
     });
-  });
+  }
+
+  if (alreadyPicked !== undefined) {
+    reveal(alreadyPicked);                    // you already chose today: show it again
+  } else {
+    cardButtons.forEach((button, i) => {
+      button.addEventListener('click', () => {
+        if (picked) return;                   // only one pick per day
+        savePick(dateKey, i);
+        reveal(i);
+      });
+    });
+  }
 }
+
+main();
